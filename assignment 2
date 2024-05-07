@@ -1,0 +1,54 @@
+Q.1 :
+
+WHAT ARE THE TOP 5 SELLING (NO OF UNITS SOLD)BIKES MODELS IN THE DATA SET.
+
+
+ans:
+
+select p.product_name,sum(s.quantity) as sum_of_products 
+from production.products as p 
+inner join sales.order_items as s 
+on p.product_id = s.product_id 
+group by p.product_name 
+order by sum_of_products desc
+LIMIT 5;
+
+2.)Show a trend in electric bike sales(number of units sold) from 2016 to 2018, aggregate data by month & year.
+
+3.)Sort the stores based on average order value.
+
+4.)Sort the stores based on average order quantity
+
+5.)Sort the stores based on total sales( selling price )
+
+6.)Which store sold the most children bikes?
+
+7.)Customers from  which state bought the most bikes?
+
+8.)Which is the most stocked bike in stores?
+
+9.)Which bike model was sold at the highest discount( use average discount over all sales )?
+
+10.)Does Santacruz sell more mountain bikes than Baldwin?
+
+11.)What was the sale value of the single larges order?
+
+12.)What was the cheapest bike model sold in 2017?
+
+13.)Total number of bikes that have been sold.
+
+14.)Total sales per year(price)
+
+15.)Total sales per store( price)
+
+16.)List the sales (total amount ) driven by each staff member in descending order
+
+17.)What's the average order fulfillment time ( Shippeddate -order date)?
+
+18.)Which store has the shortest average fulfillment time per order?
+
+19.)WHAT ARE THE LEAST 2 SELLING BRANDS (NO OF UNITS SOLD)BIKES MODELS IN THE DATA SET.
+
+20.)what are the 3 montsh with most bike sales '.
+
+
