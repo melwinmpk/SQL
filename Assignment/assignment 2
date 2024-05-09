@@ -161,13 +161,8 @@ LIMIT 5;
 
 Page 42, 74, 86, 214(last insert query)
 
-Q.1 : WHAT ARE THE TOP 5 SELLING (NO OF UNITS SOLD)BIKES MODELS IN THE DATA SET.
+1.)WHAT ARE THE TOP 5 SELLING (NO OF UNITS SOLD)BIKES MODELS IN THE DATA SET.
 
-SELECT p.product_name, SUM(o.quantity) as UNITS FROM production.products p 
-INNER JOIN sales.order_items o ON p.product_id = o.product_id
-GROUP BY p.product_name
-ORDER BY SUM(o.quantity) desc
-LIMIT 5;
 
 mysql> SELECT p.product_name, SUM(o.quantity) as UNITS FROM production.products p
     -> INNER JOIN sales.order_items o ON p.product_id = o.product_id
@@ -177,19 +172,19 @@ mysql> SELECT p.product_name, SUM(o.quantity) as UNITS FROM production.products 
 +-----------------------------------------------+-------+
 | product_name                                  | UNITS |
 +-----------------------------------------------+-------+
-| Electra Cruiser 1 (24-Inch) - 2016            |   295 |
+| Electra Cruiser 1 (24-Inch) - 2016            |   293 |
 | Electra Girl's Hawaii 1 (16-inch) - 2015/2016 |   269 |
 | Surly Ice Cream Truck Frameset - 2016         |   167 |
-| Electra Townie Original 7D EQ - 2016          |   154 |
-| Trek Slash 8 27.5 - 2016                      |   154 |
+| Electra Townie Original 21D - 2016            |   153 |
+| Trek Slash 8 27.5 - 2016                      |   153 |
 +-----------------------------------------------+-------+
-5 rows in set (0.01 sec)
+5 rows in set (0.04 sec)
 
 2.)Show a trend in electric bike sales(number of units sold) from 2016 to 2018, aggregate data by month & year.
 
 mysql> WITH  TEMP AS
     -> (
-    -> SELECT YEAR(o.order_date) AS SALE_YEAR, MONTH(o.order_date) AS SALE_MONTH, SUM((oi.list_price-oi.discount)*oi.quantity) as Sales
+    -> SELECT YEAR(o.order_date) AS SALE_YEAR, MONTH(o.order_date) AS SALE_MONTH, SUM(oi.list_price) as Sales
     -> FROM sales.orders o
     -> LEFT JOIN sales.order_items oi ON o.order_id = oi.order_id
     -> INNER JOIN production.products as p ON oi.product_id = p.product_id
@@ -203,50 +198,50 @@ mysql> WITH  TEMP AS
 +-----------+------------+----------+-----------+
 | SALE_YEAR | SALE_MONTH | Sales    | Trend     |
 +-----------+------------+----------+-----------+
-|      2016 |          1 | 29998.62 |      NULL |
-|      2016 |          2 | 11999.56 | -17999.06 |
-|      2016 |          3 | 26999.16 |  14999.60 |
-|      2016 |          5 |  8999.60 | -17999.56 |
-|      2016 |          6 | 32998.89 |  23999.29 |
-|      2016 |          7 | 29998.93 |  -2999.96 |
-|      2016 |          8 | 23999.09 |  -5999.84 |
-|      2016 |          9 | 26999.29 |   3000.20 |
-|      2016 |         10 | 44998.19 |  17998.90 |
-|      2016 |         11 | 38998.48 |  -5999.71 |
-|      2016 |         12 | 32998.60 |  -5999.88 |
-|      2017 |          1 | 40118.63 |   7120.03 |
-|      2017 |          2 |  9679.26 | -30439.37 |
-|      2017 |          3 | 10559.31 |    880.05 |
-|      2017 |          4 | 12999.67 |   2440.36 |
-|      2017 |          5 | 15999.46 |   2999.79 |
-|      2017 |          6 | 30559.28 |  14559.82 |
-|      2017 |          7 | 18358.74 | -12200.54 |
-|      2017 |          8 | 50917.85 |  32559.11 |
-|      2017 |          9 | 38238.98 | -12678.87 |
-|      2017 |         10 | 17999.49 | -20239.49 |
-|      2017 |         11 | 31559.21 |  13559.72 |
-|      2017 |         12 | 35999.09 |   4439.88 |
-|      2018 |          1 | 75318.19 |  39319.10 |
-|      2018 |          2 | 53797.67 | -21520.52 |
-|      2018 |          3 | 65957.73 |  12160.06 |
+|      2016 |          1 | 17999.94 |      NULL |
+|      2016 |          2 |  5999.98 | -11999.96 |
+|      2016 |          3 | 17999.94 |  11999.96 |
+|      2016 |          5 |  8999.97 |  -8999.97 |
+|      2016 |          6 | 20999.93 |  11999.96 |
+|      2016 |          7 | 26999.91 |   5999.98 |
+|      2016 |          8 | 20999.93 |  -5999.98 |
+|      2016 |          9 | 20999.93 |      0.00 |
+|      2016 |         10 | 26999.91 |   5999.98 |
+|      2016 |         11 | 26999.91 |      0.00 |
+|      2016 |         12 | 17999.94 |  -8999.97 |
+|      2017 |          1 | 28559.92 |  10559.98 |
+|      2017 |          2 |  8119.97 | -20439.95 |
+|      2017 |          3 |  7559.97 |   -560.00 |
+|      2017 |          4 |  7999.98 |    440.01 |
+|      2017 |          5 |  7999.98 |      0.00 |
+|      2017 |          6 | 22559.94 |  14559.96 |
+|      2017 |          7 | 10679.95 | -11879.99 |
+|      2017 |          8 | 31799.89 |  21119.94 |
+|      2017 |          9 | 20679.93 | -11119.96 |
+|      2017 |         10 | 11999.96 |  -8679.97 |
+|      2017 |         11 | 21559.95 |   9559.99 |
+|      2017 |         12 | 21999.94 |    439.99 |
+|      2018 |          1 | 50919.86 |  28919.92 |
+|      2018 |          2 | 31199.92 | -19719.94 |
+|      2018 |          3 | 45559.86 |  14359.94 |
 +-----------+------------+----------+-----------+
-26 rows in set (0.00 sec)
+26 rows in set (0.02 sec)
 
 3.)Sort the stores based on average order value.
 
-mysql> select s.store_id, AVG((oi.list_price - oi.discount)*oi.quantity)
+mysql> select s.store_id, AVG(oi.list_price)
     -> from sales.stores s
     -> LEFT JOIN sales.orders o ON o.store_id = s.store_id
     -> INNER JOIN sales.order_items oi ON o.order_id = oi.order_id
     -> GROUP BY s.store_id
-    -> ORDER BY AVG((oi.list_price - oi.discount)*oi.quantity);
-+----------+------------------------------------------------+
-| store_id | AVG((oi.list_price - oi.discount)*oi.quantity) |
-+----------+------------------------------------------------+
-|        1 |                                    1738.546463 |
-|        2 |                                    1809.010061 |
-|        3 |                                    1835.647012 |
-+----------+------------------------------------------------+
+    -> ORDER BY AVG(oi.list_price);
++----------+--------------------+
+| store_id | AVG(oi.list_price) |
++----------+--------------------+
+|        1 |        1164.537125 |
+|        2 |        1209.320446 |
+|        3 |        1219.004434 |
++----------+--------------------+
 3 rows in set (0.01 sec)
 
 4.)Sort the stores based on average order quantity
@@ -260,7 +255,7 @@ mysql> select s.store_id, AVG(oi.quantity)
 +----------+------------------+
 | store_id | AVG(oi.quantity) |
 +----------+------------------+
-|        2 |           1.4949 |
+|        2 |           1.4950 |
 |        1 |           1.5025 |
 |        3 |           1.5039 |
 +----------+------------------+
@@ -268,24 +263,22 @@ mysql> select s.store_id, AVG(oi.quantity)
 
 5.)Sort the stores based on total sales( selling price )
 
-
-mysql> select s.store_id, SUM((oi.list_price - oi.discount)*oi.quantity)
+mysql> select s.store_id, SUM(oi.list_price)
     -> from sales.stores s
     -> LEFT JOIN sales.orders o ON o.store_id = s.store_id
     -> INNER JOIN sales.order_items oi ON o.order_id = oi.order_id
     -> GROUP BY s.store_id
-    -> ORDER BY SUM((oi.list_price - oi.discount)*oi.quantity);
-+----------+------------------------------------------------+
-| store_id | SUM((oi.list_price - oi.discount)*oi.quantity) |
-+----------+------------------------------------------------+
-|        3 |                                      939851.27 |
-|        1 |                                     1705514.08 |
-|        2 |                                     5651347.43 |
-+----------+------------------------------------------------+
+    -> ORDER BY SUM(oi.list_price);
++----------+--------------------+
+| store_id | SUM(oi.list_price) |
++----------+--------------------+
+|        3 |          624130.27 |
+|        1 |         1142410.92 |
+|        2 |         3771870.47 |
++----------+--------------------+
 3 rows in set (0.01 sec)
 
-6.)Which store sold the most children bikes? (in the category I didi not find the children bikes i found Children Bicycles)
-
+6.)Which store sold the most children bikes?
 
 mysql> SELECT s.store_name , SUM(oi.quantity) as UNITS
     -> FROM sales.stores s
@@ -300,9 +293,9 @@ mysql> SELECT s.store_name , SUM(oi.quantity) as UNITS
 +---------------+-------+
 | store_name    | UNITS |
 +---------------+-------+
-| Baldwin Bikes |   809 |
+| Baldwin Bikes |   807 |
 +---------------+-------+
-1 row in set (0.05 sec)
+1 row in set (0.01 sec)
 
 7.)Customers from  which state bought the most bikes?
 
@@ -317,26 +310,11 @@ mysql> SELECT cu.state , SUM(oi.quantity) as UNITS
 +-------+-------+
 | state | UNITS |
 +-------+-------+
-| NY    |  4764 |
+| NY    |  4782 |
 +-------+-------+
-1 row in set (0.01 sec)
-
+1 row in set (0.02 sec)
 
 8.)Which is the most stocked bike in stores?
-WITH TEMP AS
-(
-SELECT s.store_name, p.product_name, SUM(quantity ) as UNITS
-FROM sales.stores s
-INNER JOIN production.stocks st ON s.store_id = st.store_id 
-INNER JOIN production.products p ON st.product_id = p.product_id 
-GROUP BY s.store_name, p.product_name
-)
-SELECT store_name, product_name, UNITS
-FROM 
-(
-	SELECT store_name, product_name, UNITS, RANK() OVER(PARTITION BY store_name ORDER BY UNITS DESC) as rnk
-FROM TEMP ) x
-WHERE  rnk = 1;
 
 mysql> WITH TEMP AS
     -> (
@@ -360,77 +338,233 @@ mysql> WITH TEMP AS
 | Rowlett Bikes    | Electra Townie Balloon 7i EQ - 2018 |    53 |
 | Santa Cruz Bikes | Sun Bicycles Cruz 3 - 2017          |    60 |
 +------------------+-------------------------------------+-------+
-
+4 rows in set (0.01 sec)
 
 9.)Which bike model was sold at the highest discount( use average discount over all sales )?
 
-Select 
-
+mysql> WITH TEMP AS
+    -> (SELECT p.product_name, AVG(oi.discount) avg_discount, RANK() OVER(ORDER BY AVG(oi.discount) desc ) as rnk
+    -> FROM production.products p
+    -> INNER JOIN sales.order_items oi ON p.product_id = oi.product_id
+    -> GROUP BY p.product_name)
+    -> SELECT product_name, avg_discount, rnk
+    -> FROM TEMP
+    -> WHERE rnk = 1;
++------------------------------------------------+--------------+-----+
+| product_name                                   | avg_discount | rnk |
++------------------------------------------------+--------------+-----+
+| Trek Fuel EX 7 29 - 2018                       |     0.200000 |   1 |
+| Electra Cruiser Lux 7D Ladies' - 2018          |     0.200000 |   1 |
+| Electra Treasure 3i 20" - 2018                 |     0.200000 |   1 |
+| Trek Lift+ Lowstep - 2018                      |     0.200000 |   1 |
+| Trek Remedy 9.8 27.5 - 2018                    |     0.200000 |   1 |
+| Trek Domane SL 5 Women's - 2018                |     0.200000 |   1 |
+| Electra Soft Serve 1 (16-inch) - Girl's - 2018 |     0.200000 |   1 |
+| Trek Domane SLR Disc Frameset - 2018           |     0.200000 |   1 |
+| Trek Precaliber 24 7-speed Girl's - 2018       |     0.200000 |   1 |
++------------------------------------------------+--------------+-----+
+9 rows in set (0.02 sec)
 
 10.)Does Santacruz sell more mountain bikes than Baldwin?
 
+mysql> SELECT s.store_name, SUM(oi.quantity)
+    -> FROM sales.stores s
+    -> INNER JOIN sales.orders o ON o.store_id = s.store_id
+    -> INNER JOIN sales.order_items oi ON o.order_id = oi.order_id
+    -> INNER JOIN production.products p ON oi.product_id = p.product_id
+    -> INNER JOIN production.categories c ON p.category_id = c.category_id
+    -> WHERE s.store_name IN ('Santa Cruz Bikes','Baldwin Bikes') and
+    -> c.category_name = 'Mountain Bikes' AND
+    -> o.order_status = 4
+    -> GROUP BY s.store_name
+    -> ORDER BY SUM(oi.quantity) desc;
++------------------+------------------+
+| store_name       | SUM(oi.quantity) |
++------------------+------------------+
+| Baldwin Bikes    |             1102 |
+| Santa Cruz Bikes |              333 |
++------------------+------------------+
+2 rows in set (0.02 sec)
+
+AS per the results Baldwin sold more mountain bikes than Santacruz
+
+
 11.)What was the sale value of the single larges order?
+
+mysql> WITH TEMP AS
+    -> (
+    ->     SELECT order_id, SUM(list_price) as sale_value ,SUM(quantity) as total_qty, RANK() OVER(ORDER BY SUM(quantity) desc) as rnk
+    ->     FROM sales.order_items
+    ->     GROUP BY order_id
+    -> )
+    -> SELECT order_id, total_qty, sale_value
+    -> FROM TEMP
+    -> WHERE rnk = 1;
++----------+-----------+------------+
+| order_id | total_qty | sale_value |
++----------+-----------+------------+
+|      813 |        10 |    2166.95 |
+|      944 |        10 |    3006.95 |
+|     1577 |        10 |    4429.96 |
++----------+-----------+------------+
+3 rows in set (0.01 sec)
 
 12.)What was the cheapest bike model sold in 2017?
 
+mysql> SELECT * FROM
+    -> (
+    ->     SELECT DISTINCT YEAR(o.order_date), p.product_name, p.list_price, RANK() OVER(ORDER BY p.list_price) as rnk
+    ->     FROM sales.orders o
+    ->     INNER JOIN sales.order_items oi ON oi.order_id = o.order_id
+    ->     INNER JOIN production.products p ON oi.product_id = p.product_id
+    ->     WHERE
+    ->     YEAR(o.order_date) = 2017 AND
+    ->     o.order_status = 4
+    ->     ORDER BY p.list_price
+    -> ) x
+    -> WHERE rnk = 1;
++--------------------+--------------------------------+------------+-----+
+| YEAR(o.order_date) | product_name                   | list_price | rnk |
++--------------------+--------------------------------+------------+-----+
+|               2017 | Sun Bicycles Lil Kitt'n - 2017 |     109.99 |   1 |
++--------------------+--------------------------------+------------+-----+
+1 row in set (0.02 sec)
+
+
 13.)Total number of bikes that have been sold.
+
+mysql> select SUM(quantity) FROM sales.order_items;
++---------------+
+| SUM(quantity) |
++---------------+
+|          6907 |
++---------------+
+1 row in set (0.00 sec)
 
 14.)Total sales per year(price)
 
-mysql> Select YEAR(o.order_date), SUM((oi.list_price-oi.discount)*quantity)
+mysql> Select YEAR(o.order_date), SUM(oi.list_price)
     -> FROM sales.orders o
     -> INNER JOIN sales.order_items oi ON o.order_id = oi.order_id
     -> WHERE o.order_status = 4
     -> GROUP BY YEAR(o.order_date);
-+--------------------+-------------------------------------------+
-| YEAR(o.order_date) | SUM((oi.list_price-oi.discount)*quantity) |
-+--------------------+-------------------------------------------+
-|               2016 |                                2456500.61 |
-|               2017 |                                3665361.91 |
-|               2018 |                                1043173.40 |
-+--------------------+-------------------------------------------+
-3 rows in set (0.01 sec)
++--------------------+--------------------+
+| YEAR(o.order_date) | SUM(oi.list_price) |
++--------------------+--------------------+
+|               2016 |         1631448.22 |
+|               2017 |         2450778.64 |
+|               2018 |          705525.57 |
++--------------------+--------------------+
+3 rows in set (0.02 sec)
 
 15.)Total sales per store( price)
 
-mysql> Select s.store_name, SUM((oi.list_price-oi.discount)*quantity)
+mysql> Select s.store_name, SUM(oi.list_price)
     -> FROM sales.stores s
     -> INNER JOIN sales.orders o ON s.store_id = o.store_id
     -> INNER JOIN sales.order_items oi ON o.order_id = oi.order_id
     -> WHERE o.order_status = 4
     -> GROUP BY s.store_name;
-+------------------+-------------------------------------------+
-| store_name       | SUM((oi.list_price-oi.discount)*quantity) |
-+------------------+-------------------------------------------+
-| Santa Cruz Bikes |                                1318285.54 |
-| Baldwin Bikes    |                                5084106.78 |
-| Rowlett Bikes    |                                 762643.60 |
-+------------------+-------------------------------------------+
++------------------+--------------------+
+| store_name       | SUM(oi.list_price) |
++------------------+--------------------+
+| Santa Cruz Bikes |          889691.75 |
+| Baldwin Bikes    |         3400926.59 |
+| Rowlett Bikes    |          497134.09 |
++------------------+--------------------+
 3 rows in set (0.01 sec)
 
 16.)List the sales (total amount ) driven by each staff member in descending order
-mysql> select st.first_name , SUM((oi.list_price - oi.discount)*oi.quantity) as SALE
+
+mysql> select st.first_name , SUM(oi.list_price) as SALE
     -> FROM sales.staffs st
     -> INNER JOIN sales.orders o ON st.staff_id = o.staff_id
     -> INNER JOIN sales.order_items oi ON o.order_id = oi.order_id
     -> GROUP BY st.first_name
-    -> ORDER BY SUM((oi.list_price - oi.discount)*oi.quantity) desc;
+    -> ORDER BY SUM(oi.list_price) desc;
 +------------+------------+
 | first_name | SALE       |
 +------------+------------+
-| Marcelene  | 2851646.01 |
-| Venita     | 2799701.42 |
-| Genna      |  915655.60 |
-| Mireya     |  789858.48 |
-| Kali       |  499024.91 |
-| Layla      |  440826.36 |
+| Marcelene  | 1897771.52 |
+| Venita     | 1874098.95 |
+| Genna      |  605744.05 |
+| Mireya     |  536666.87 |
+| Kali       |  325318.58 |
+| Layla      |  298811.69 |
 +------------+------------+
-6 rows in set (0.01 sec)
+6 rows in set (0.02 sec)
 
 17.)What's the average order fulfillment time ( Shippeddate -order date)?
 
+mysql> SELECT AVG(DATEDIFF(shipped_date, order_date)) FROM sales.orders
+    -> WHERE order_status = 4;
++-----------------------------------------+
+| AVG(DATEDIFF(shipped_date, order_date)) |
++-----------------------------------------+
+|                                  1.9813 |
++-----------------------------------------+
+1 row in set (0.00 sec)
+
 18.)Which store has the shortest average fulfillment time per order?
+
+mysql> SELECT s.store_name ,AVG(DATEDIFF(o.shipped_date, o.order_date))
+    -> FROM sales.stores s
+    -> INNER JOIN sales.orders o ON s.store_id =o.store_id
+    -> GROUP BY s.store_name
+    -> ORDER BY AVG(DATEDIFF(o.shipped_date, o.order_date))
+    -> limit 1;
++---------------+---------------------------------------------+
+| store_name    | AVG(DATEDIFF(o.shipped_date, o.order_date)) |
++---------------+---------------------------------------------+
+| Rowlett Bikes |                                      1.9225 |
++---------------+---------------------------------------------+
+1 row in set (0.01 sec)
+
 
 19.)WHAT ARE THE LEAST 2 SELLING BRANDS (NO OF UNITS SOLD)BIKES MODELS IN THE DATA SET.
 
+mysql> SELECT b.brand_name, SUM(oi.quantity)
+    -> FROM sales.orders o
+    -> INNER JOIN sales.order_items oi ON o.order_id = oi.order_id
+    -> INNER JOIN production.products p ON oi.product_id = p.product_id
+    -> INNER JOIN production.brands b ON p.brand_id = b.brand_id
+    -> WHERE o.order_status = 4
+    -> GROUP BY b.brand_name
+    -> ORDER BY SUM(oi.quantity)
+    -> LIMIT 2;
++------------+------------------+
+| brand_name | SUM(oi.quantity) |
++------------+------------------+
+| Strider    |               13 |
+| Ritchey    |              117 |
++------------+------------------+
+2 rows in set (0.02 sec)
+
+
 20.)what are the 3 montsh with most bike sales '.
+-- Top top 3 months of bike sales
+mysql> WITH  TEMP AS
+    -> (
+    -> SELECT YEAR(o.order_date) AS SALE_YEAR,
+    ->        MONTH(o.order_date) AS SALE_MONTH,
+    ->        SUM(oi.list_price) as Sales,
+    ->        RANK() OVER(ORDER BY SUM(oi.list_price) desc) as rnk
+    -> FROM sales.orders o
+    -> LEFT JOIN sales.order_items oi ON o.order_id = oi.order_id
+    -> INNER JOIN production.products as p ON oi.product_id = p.product_id
+    -> INNER JOIN production.categories as c ON p.category_id = c.category_id
+    -> WHERE c.category_name = 'Electric Bikes' and o.order_status = 4
+    -> GROUP BY YEAR(o.order_date),MONTH(o.order_date)
+    -> )
+    -> SELECT SALE_YEAR, SALE_MONTH, Sales
+    -> FROM TEMP
+    -> WHERE rnk IN (1,2,3)
+    -> ORDER BY Sales desc;
++-----------+------------+----------+
+| SALE_YEAR | SALE_MONTH | Sales    |
++-----------+------------+----------+
+|      2018 |          1 | 50919.86 |
+|      2018 |          3 | 45559.86 |
+|      2017 |          8 | 31799.89 |
++-----------+------------+----------+
+3 rows in set (0.01 sec)
