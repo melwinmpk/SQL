@@ -1,0 +1,8 @@
+*****Unix Assignment*****
+1) How to display the 10th line of a file?
+2) How to remove the header from a file?
+
+*****SQL Assignment*****
+1) List employee number, name, his department and the department name?
+2) List employee name, his department name and the department location?
+3) List employee name, department name for all the clerks in the company?
