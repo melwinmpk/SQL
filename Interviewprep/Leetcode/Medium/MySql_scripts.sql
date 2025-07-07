@@ -247,4 +247,157 @@ ORDER BY visited_on ;
 
 
 
+CREATE TABLE medium_1341_movies (
+	movie_id int,    
+	title    varchar(8)
+);
 
+CREATE TABLE medium_1341_users (
+	user_id int,
+	name varchar(6)
+);
+
+CREATE TABLE medium_1341_movierating (
+	movie_id   int ,
+	user_id    int ,
+	rating     int ,
+	created_at date
+);
+
+INSERT INTO medium_1341_movies VALUES 
+(1,'Avengers'),
+(2,'Frozen 2'),
+(3,'Joker');
+
+INSERT INTO medium_1341_users VALUES 
+(1,'Daniel'),
+(2,'Monica'),
+(3,'Maria'),
+(4,'James');
+
+INSERT INTO medium_1341_movierating VALUES 
+(1,1,3,'2020-01-12'),
+(1,2,4,'2020-02-11'),
+(1,3,2,'2020-02-12'),
+(1,4,1,'2020-01-01'),
+(2,1,5,'2020-02-17'), 
+(2,2,2,'2020-02-01'), 
+(2,3,2,'2020-03-01'),
+(3,1,3,'2020-02-22'), 
+(3,2,4,'2020-02-25');
+
+SELECT (
+WITH temp_u as (
+SELECT u.name, length(u.name) namelength, AVG(rating)
+FROM medium_1341_movierating mr 
+LEFT JOIN medium_1341_users u 
+	  ON mr.user_id = u.user_id
+GROUP BY u.name 
+ORDER BY  u.name,
+          namelength 
+limit 1
+)
+SELECT name 
+FROM temp_u ) as results
+
+UNION
+
+SELECT (
+with temp_m as ( 
+	SELECT m.title, length(m.title) title_length, AVG(rating)        
+	FROM medium_1341_movierating mr 
+	LEFT JOIN medium_1341_movies m 
+		  on mr.movie_id = m.movie_id 
+	WHERE  MONTH(mr.created_at) = 2 
+	and    YEAR(mr.created_at) = 2020
+	GROUP BY m.title 
+	ORDER BY AVG(rating) desc, 
+			 m.title,
+			 title_length  
+limit 1
+)
+SELECT title 
+FROM temp_m ) as results
+		 
+	  
+
+CREATE TABLE medium_176 (
+id     int,
+salary int
+);
+
+INSERT INTO medium_176 VALUES 
+(1,100),
+(2,200),
+(3,300);
+
+SELECT MAX(salary) as SecondHighestSalary
+FROM  medium_176 
+WHERE salary != ( SELECT MAX(salary) FROM medium_176);
+
+CREATE TABLE medium_180 (
+	id int,
+	num varchar(1)
+);
+
+INSERT INTO medium_180 VALUES
+(1,'1'),
+(2,'1'),
+(3,'1'),
+(4,'2'),
+(5,'1'),
+(6,'2'),
+(7,'2');
+
+WITH TEMP AS (
+SELECT id,num, 
+	   LAG(num,1,NULL)
+	   OVER(ORDER BY id) as lag_1,
+	   LAG(num,2,NULL)
+	   OVER(ORDER BY id) as lag_2
+FROM medium_180
+)
+SELECT distinct num as ConsecutiveNums 
+FROM TEMP 
+WHERE num = lag_1 and num = lag_2;
+
+CREATE TABLE medium_1907 (
+	account_id int,
+	income     int
+);
+
+INSERT INTO medium_1907 VALUES
+(3,108939),
+(2,12747 ),
+(8,87709 ),
+(6,91796 );
+
+WITH TEMP AS (
+	SELECT account_id, income,
+		   CASE WHEN income < 20000
+					THEN "Low Salary"
+				WHEN income BETWEEN 20000 AND 50000
+					THEN "Average Salary"
+				WHEN income > 50000
+					THEN "High Salary"
+			END category
+	FROM medium_1907
+)
+SELECT category, COUNT(*) as accounts_count
+FROM TEMP
+GROUP BY category;
+
+SELECT "Low Salary" as category, 
+       count(*) as accounts_count
+FROM medium_1907
+WHERE income < 20000
+UNION 
+SELECT "Average Salary" as category, 
+       count(*) as accounts_count
+FROM medium_1907
+WHERE income BETWEEN 20000 AND 50000
+UNION
+SELECT "High Salary" as category, 
+       count(*) as accounts_count
+FROM medium_1907
+WHERE income > 50000;
