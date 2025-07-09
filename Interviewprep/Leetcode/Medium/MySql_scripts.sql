@@ -401,3 +401,86 @@ SELECT "High Salary" as category,
        count(*) as accounts_count
 FROM medium_1907
 WHERE income > 50000;
+
+CREATE TABLE medium_1934_signups (
+	user_id    int     ,
+	time_stamp datetime
+);
+
+CREATE TABLE medium_1934_confirmations (
+	user_id    int     ,
+	time_stamp datetime,
+	action     ENUM  ('confirmed','timeout')  
+);
+
+INSERT INTO medium_1934_signups VALUES 
+(3,'2020-03-21 10:16:13'),
+(7,'2020-01-04 13:57:59'),
+(2,'2020-07-29 23:09:44'),
+(6,'2020-12-09 10:39:37');
+
+INSERT INTO medium_1934_confirmations VALUES 
+(3,'2021-01-06 03:30:46','timeout'),
+(3,'2021-07-14 14:00:00','timeout'),
+(7,'2021-06-12 11:57:29','confirmed'),
+(7,'2021-06-13 12:58:28','confirmed'),
+(7,'2021-06-14 13:59:27','confirmed'),
+(2,'2021-01-22 00:00:00','confirmed'),
+(2,'2021-02-28 23:59:59','timeout');
+
+SELECT s.user_id, 
+		CASE WHEN
+		(SUM(
+			CASE WHEN action = 'confirmed' 
+				 THEN 1
+				 ELSE 0
+			END)/COUNT(action))  
+		IS NULL THEN 0.00 
+		ELSE 
+		ROUND(SUM(
+			CASE WHEN action = 'confirmed' 
+				 THEN 1
+				 ELSE 0
+			END)/COUNT(action),2) END as confirmation_rate
+FROM medium_1934_signups s
+LEFT JOIN medium_1934_confirmations c 
+	 ON s.user_id = c.user_id
+GROUP BY s.user_id;
+
+CREATE TABLE medium_550 (
+	player_id    int ,
+	device_id    int ,
+	event_date   date,
+	games_played int 
+);
+
+INSERT INTO medium_550 VALUES 
+(1,2,'2016-03-01',5),
+(1,2,'2016-03-02',6),
+(2,3,'2017-06-25',1),
+(3,1,'2016-03-02',0),
+(3,4,'2018-07-03',5);
+
+WITH TEMP AS (
+SELECT player_id, 
+	   event_date, 
+	   LEAD(event_date,1,NULL) 
+	   OVER(PARTITION BY player_id 
+			ORDER BY event_date) as lag_date,
+	   RANK() 
+	   OVER(PARTITION BY player_id 
+			ORDER BY event_date) as rnk
+FROM medium_550 )
+SELECT ROUND(count(*)/(SELECT count(DISTINCT player_id) FROM medium_550),2) 
+as fraction
+FROM TEMP
+WHERE ADDDATE(event_date, INTERVAL 1 DAY) = lag_date 
+AND rnk = 1;
+
+CREATE TABLE medium_585 (
+	pid      int  ,
+	tiv_2015 float,
+	tiv_2016 float,
+	lat      float,
+	lon      float
+);
