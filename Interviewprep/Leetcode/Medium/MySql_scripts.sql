@@ -484,3 +484,111 @@ CREATE TABLE medium_585 (
 	lat      float,
 	lon      float
 );
+
+INSERT INTO medium_585 VALUES
+(1,10,5 ,10,10),
+(2,20,20,20,20),
+(3,10,30,20,20),
+(4,10,40,40,40);
+
+WITH CHECK_UNIQUE AS (
+	SELECT lat,lon,count(*) 
+	FROM medium_585
+	GROUP BY lat,lon
+	HAVING count(*) = 1
+),
+SAME_2015 as (
+	SELECT  tiv_2015,count(*) 
+	FROM medium_585 
+	GROUP BY tiv_2015
+	HAVING count(*) > 1
+)
+SELECT ROUND(SUM(tiv_2016),2) as tiv_2016
+FROM 
+medium_585 t
+INNER JOIN CHECK_UNIQUE c ON c.lat = t.lat 
+						  AND c.lon = t.lon
+INNER JOIN SAME_2015 s ON s.tiv_2015 = t.tiv_2015;
+
+
+CREATE TABLE medium_602 (
+	requester_id int ,
+	accepter_id  int ,
+	accept_date  date
+);
+
+INSERT INTO medium_602 VALUES 
+(1,2,'2016/06/03'),
+(1,3,'2016/06/08'),
+(2,3,'2016/06/08'),
+(3,4,'2016/06/09');
+
+WITH COUNT_FRIEND AS (
+SELECT accepter_id as id, count(requester_id) as num 
+FROM medium_602 
+GROUP BY id
+ORDER BY count(requester_id) desc limit 1
+),
+FRIEND AS (
+SELECT requester_id as id ,COUNT(accepter_id) as num 
+FROM medium_602 
+WHERE requester_id in (SELECT id FROM COUNT_FRIEND )
+GROUP BY id
+)
+SELECT c.id , c.num+f.num as num
+FROM COUNT_FRIEND c 
+LEFT JOIN FRIEND f on c.id = f.id ;
+
+
+CREATE TABLE medium_626 (
+	id int,
+	student varchar(7)
+);
+
+INSERT INTO medium_626 VALUES
+(1,'Abbot'  ),
+(2,'Doris'  ),
+(3,'Emerson'),
+(4,'Green'  ),
+(5,'Jeames' );
+
+
+WITH TEMP AS (
+	SELECT id, student, id%2+id as grp,
+		RANK() OVER(PARTITION BY id%2+id ORDER BY id DESC ) as rnk
+	FROM medium_626
+), EVEN AS (
+	SELECT t1.id, t2.student  
+	FROM TEMP t1, TEMP t2
+	WHERE t1.grp = t2.grp 
+	AND t1.id > t2.id 
+),ODD AS (
+	SELECT t1.id, t2.student  
+	FROM TEMP t1, TEMP t2
+	WHERE t1.grp = t2.grp 
+	AND t1.id < t2.id 
+),UNION_T as (
+	SELECT * FROM EVEN 
+		UNION 
+	SELECT * FROM ODD 
+		UNION 
+	SELECT id, student 
+	FROM TEMP 
+	WHERE id not in (SELECT id FROM EVEN) 
+	and   id not in (SELECT id FROM ODD)  
+) 
+SELECT id, student FROM UNION_T
+order by id;
+
+SELECT 
+	CASE WHEN id = (SELECT MAX(id) FROM medium_626) 
+	     AND  id%2 != 0 
+			THEN id 
+		 WHEN id%2 = 0 
+			THEN id - 1
+		 WHEN id%2 != 0
+			THEN id + 1 
+	END as id,
+	student 
+FROM medium_626
+ORDER BY id;
